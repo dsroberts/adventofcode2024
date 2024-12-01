@@ -34,6 +34,6 @@ int main()
     std::sort(col1.begin(), col1.end());
     std::sort(col2.begin(), col2.end());
     std::vector<int> diffs;
-    std::transform(col1.begin(), col1.end(),col2.begin(),std::back_inserter(diffs),diff);
-    std::cout << std::accumulate(diffs.begin(),diffs.end(),0) << std::endl;
+    std::transform(col1.begin(), col1.end(), col2.begin(), std::back_inserter(diffs), diff);
+    std::cout << std::accumulate(diffs.begin(), diffs.end(), 0) << std::endl;
 }
