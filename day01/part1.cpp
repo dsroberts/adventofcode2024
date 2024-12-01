@@ -4,6 +4,12 @@
 #include <algorithm>
 #include <vector>
 #include <sstream>
+#include <numeric>
+
+int diff(int a, int b)
+{
+    return a > b ? a - b : b - a;
+}
 
 int main()
 {
@@ -27,11 +33,7 @@ int main()
 
     std::sort(col1.begin(), col1.end());
     std::sort(col2.begin(), col2.end());
-
-    auto sum = 0l;
-    for (auto i = 0ul; i < col1.size(); i++)
-    {
-        sum += (col1[i] > col2[i] ? col1[i] - col2[i] : col2[i] - col1[i]);
-    }
-    std::cout << sum << std::endl;
+    std::vector<int> diffs;
+    std::transform(col1.begin(), col1.end(),col2.begin(),std::back_inserter(diffs),diff);
+    std::cout << std::accumulate(diffs.begin(),diffs.end(),0) << std::endl;
 }
