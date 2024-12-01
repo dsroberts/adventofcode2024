@@ -5,6 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <numeric>
+#include <ranges>
 
 int diff(int a, int b)
 {
@@ -33,7 +34,8 @@ int main()
 
     std::sort(col1.begin(), col1.end());
     std::sort(col2.begin(), col2.end());
-    std::vector<int> diffs;
-    std::transform(col1.begin(), col1.end(), col2.begin(), std::back_inserter(diffs), diff);
-    std::cout << std::accumulate(diffs.begin(), diffs.end(), 0) << std::endl;
+    std::cout << std::ranges::fold_left(std::views::transform(std::views::zip(col1, col2), [](std::tuple<int, int> a)
+                                                              { return std::abs(std::get<0>(a) - std::get<1>(a)); }),
+                                        0, std::plus<int>())
+              << std::endl;
 }
