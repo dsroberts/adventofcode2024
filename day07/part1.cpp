@@ -11,25 +11,18 @@
 class Plus_Or_Mul
 {
 public:
-    Plus_Or_Mul(int count) : ctr(0),
-                             func_idx(0)
+    Plus_Or_Mul(uint32_t count) : ctr(0),
+                                  func_idx(0)
     {
         // Count number of muls;
-        for (auto i = 0l; i < count + 1; ++i)
+        for (auto star_count = 0ul; star_count < count + 1; ++star_count)
         {
-            std::string tmp;
-            for (auto j = 0l; j < i; ++j)
-            {
-                tmp.push_back('*');
-            }
-            for (auto j = i; j < count; ++j)
-            {
-                tmp.push_back('+');
-            }
+            auto plus_count = count - star_count;
+            std::string tmp = std::string(star_count, '*') + std::string(plus_count, '+');
             do
             {
                 ops.push_back(tmp);
-            } while (std::next_permutation(tmp.begin(), tmp.end()));
+            } while (std::ranges::next_permutation(tmp).found);
         }
     };
     void inc_idx()

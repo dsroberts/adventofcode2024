@@ -18,17 +18,13 @@ public:
         {
             for (auto star_count = 0l; star_count < count - pipe_count + 1; star_count++)
             {
-                for (auto plus_count = 0l; plus_count < count - star_count - pipe_count + 1; plus_count++)
+                auto plus_count = count - pipe_count - star_count;
+
+                std::string tmp = std::string(star_count, '*') + std::string(plus_count, '+') + std::string(pipe_count, '|');
+                do
                 {
-                    if (pipe_count + star_count + plus_count == count)
-                    {
-                        std::string tmp = std::string(star_count, '*') + std::string(plus_count, '+') + std::string(pipe_count, '|');
-                        do
-                        {
-                            ops.push_back(tmp);
-                        } while (std::next_permutation(tmp.begin(), tmp.end()));
-                    }
-                }
+                    ops.push_back(tmp);
+                } while (std::ranges::next_permutation(tmp).found);
             }
         }
     };
