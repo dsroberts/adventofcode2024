@@ -21,7 +21,6 @@ bool in_order(std::vector<int> update, int i, std::vector<int> afters)
 std::vector<int> reorder(std::vector<int> in, std::map<int, std::vector<int>> *afters)
 {
     std::vector<int> out(in);
-    out.reserve(in.size());
     for (auto i = 0; i < in.size(); ++i)
     {
         for (auto j = i + 1; j < in.size(); ++j)
