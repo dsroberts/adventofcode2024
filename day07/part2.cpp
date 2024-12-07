@@ -11,7 +11,8 @@
 class Plus_Or_Mul
 {
 public:
-    Plus_Or_Mul(int count)
+    Plus_Or_Mul(int count) : ctr(0),
+                             func_idx(0)
     {
         for (auto pipe_count = 0l; pipe_count < count + 1; pipe_count++)
         {
@@ -31,10 +32,10 @@ public:
             }
         }
     };
-    void set_func_idx(int idx)
+    void inc_idx()
     {
-        func_idx = idx;
         ctr = 0;
+        func_idx++;
     }
     uint64_t func(const uint64_t a, const uint64_t b)
     {
@@ -100,7 +101,6 @@ int main()
         auto funcs = Plus_Or_Mul(values.size() - 1);
         for (auto i = 0ul; i < funcs.size(); i++)
         {
-            funcs.set_func_idx(i);
             auto mul = std::ranges::fold_left(values.begin() + 1, values.end(), *values.begin(), [&funcs](uint64_t a, uint64_t b)
                                               { return funcs.func(a, b); });
             if (mul == target)
@@ -115,6 +115,7 @@ int main()
                 // std::cout << values.back() << std::endl;
                 break;
             }
+            funcs.inc_idx();
         }
     }
     std::cout << sum << std::endl;
