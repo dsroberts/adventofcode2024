@@ -30,47 +30,20 @@ private:
     std::string repr_;
 };
 
-class Plus_Or_Mul
+template <class T>
+class OpChain
 {
 public:
-    Plus_Or_Mul(uint32_t count) : ctr_(0),
-                                  func_idx_(0)
+    OpChain(std::vector<SortableOperator<T>> ops) : ops_(ops),
+                                                    it_(ops_.begin())
     {
-        // Count number of muls;
-        for (auto star_count = 0ul; star_count < count + 1; ++star_count)
-        {
-            auto plus_count = count - star_count;
-            std::vector<SortableOperator<uint64_t>> tmp{star_count, SortableOperator<uint64_t>(std::multiplies<uint64_t>{}, 1, std::string{'*'})};
-            std::vector<SortableOperator<uint64_t>> tmp2{plus_count, SortableOperator<uint64_t>(std::plus<uint64_t>{}, 2, std::string{'+'})};
-            std::move(tmp2.begin(), tmp2.end(), std::back_inserter(tmp));
-            do
-            {
-                ops_.push_back(tmp);
-            } while (std::next_permutation(tmp.begin(), tmp.end()));
-        }
-    };
-    void inc_idx()
-    {
-        ctr_ = 0;
-        func_idx_++;
     }
-    uint64_t func(const uint64_t a, const uint64_t b)
-    {
-        return (ops_[func_idx_][ctr_++](a, b));
-    }
-    auto size()
-    {
-        return ops_.size();
-    }
-    auto get_op()
-    {
-        return ops_[func_idx_];
-    }
+    T operator()(T a, T b) { return (*it_++)(a, b); }
+    auto get_ops() { return ops_; }
 
 private:
-    int ctr_;
-    std::vector<std::vector<SortableOperator<uint64_t>>> ops_;
-    int func_idx_;
+    std::vector<SortableOperator<T>> ops_;
+    std::vector<SortableOperator<T>>::iterator it_;
 };
 
 int main()
@@ -96,26 +69,37 @@ int main()
     }
     f.close();
     uint64_t sum = 0;
+
     for (auto [target, values] : std::views::zip(targets, vals))
     {
-        auto funcs = Plus_Or_Mul(values.size() - 1);
-        for (auto i = 0ul; i < funcs.size(); i++)
+        std::vector<OpChain<uint64_t>> ops;
+        for (auto star_count = 0ul; star_count < values.size(); ++star_count)
         {
-            auto mul = std::ranges::fold_left(values.begin() + 1, values.end(), *values.begin(), [&funcs](uint64_t a, uint64_t b)
-                                              { return funcs.func(a, b); });
+            auto plus_count = values.size() - star_count - 1;
+            std::vector<SortableOperator<uint64_t>> tmp{star_count, SortableOperator<uint64_t>(std::multiplies<uint64_t>{}, 1, std::string{'*'})};
+            std::vector<SortableOperator<uint64_t>> tmp2{plus_count, SortableOperator<uint64_t>(std::plus<uint64_t>{}, 2, std::string{'+'})};
+            std::move(tmp2.begin(), tmp2.end(), std::back_inserter(tmp));
+
+            do
+            {
+                ops.push_back(OpChain<uint64_t>(tmp));
+            } while (std::next_permutation(tmp.begin(), tmp.end()));
+        }
+        for (auto op : ops)
+        {
+            auto mul = std::ranges::fold_left(values.begin() + 1, values.end(), *values.begin(), [&op](uint64_t a, uint64_t b)
+                                              { return op(a, b); });
             if (mul == target)
             {
                 sum += mul;
                 // std::cout << uint64_t(mul) << ": ";
-                // auto ops = funcs.get_op();
-                // for (auto j = 0u; j < ops.size(); j++)
+                // for (auto [o, v] : std::views::zip(op.get_ops(), values))
                 // {
-                //     std::cout << values[j] << " " << ops[j] << " ";
+                //     std::cout << v << " " << o << " ";
                 // }
                 // std::cout << values.back() << std::endl;
                 break;
             }
-            funcs.inc_idx();
         }
     }
     std::cout << sum << std::endl;
