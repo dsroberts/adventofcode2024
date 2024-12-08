@@ -8,55 +8,69 @@
 #include <ranges>
 #include <cstdint>
 
+template <class T>
+class SortableOperator
+{
+public:
+    SortableOperator(std::function<T(T, T)> op, int idx, std::string repr) : op_(op),
+                                                                             idx_(idx),
+                                                                             repr_(repr)
+    {
+    }
+    T operator()(T a, T b) { return op_(a, b); };
+    bool operator<(const SortableOperator<T> other) { return idx_ < other.idx_; };
+    friend std::ostream &operator<<(std::ostream &out, SortableOperator<T> op)
+    {
+        return out << op.repr_;
+    };
+
+private:
+    std::function<T(T, T)> op_;
+    int idx_;
+    std::string repr_;
+};
+
 class Plus_Or_Mul
 {
 public:
-    Plus_Or_Mul(uint32_t count) : ctr(0),
-                                  func_idx(0)
+    Plus_Or_Mul(uint32_t count) : ctr_(0),
+                                  func_idx_(0)
     {
         // Count number of muls;
         for (auto star_count = 0ul; star_count < count + 1; ++star_count)
         {
             auto plus_count = count - star_count;
-            std::string tmp = std::string(star_count, '*') + std::string(plus_count, '+');
+            std::vector<SortableOperator<uint64_t>> tmp{star_count, SortableOperator<uint64_t>(std::multiplies<uint64_t>{}, 1, std::string{'*'})};
+            std::vector<SortableOperator<uint64_t>> tmp2{plus_count, SortableOperator<uint64_t>(std::plus<uint64_t>{}, 2, std::string{'+'})};
+            std::move(tmp2.begin(), tmp2.end(), std::back_inserter(tmp));
             do
             {
-                ops.push_back(tmp);
-            } while (std::ranges::next_permutation(tmp).found);
+                ops_.push_back(tmp);
+            } while (std::next_permutation(tmp.begin(), tmp.end()));
         }
     };
     void inc_idx()
     {
-        ctr = 0;
-        func_idx++;
+        ctr_ = 0;
+        func_idx_++;
     }
     uint64_t func(const uint64_t a, const uint64_t b)
     {
-
-        if (ops[func_idx][ctr] == '*')
-        {
-            ctr++;
-            return a * b;
-        }
-        else if (ops[func_idx][ctr] == '+')
-        {
-            ctr++;
-            return a + b;
-        }
+        return (ops_[func_idx_][ctr_++](a, b));
     }
     auto size()
     {
-        return ops.size();
+        return ops_.size();
     }
     auto get_op()
     {
-        return ops[func_idx];
+        return ops_[func_idx_];
     }
 
 private:
-    int ctr;
-    std::vector<std::string> ops;
-    int func_idx;
+    int ctr_;
+    std::vector<std::vector<SortableOperator<uint64_t>>> ops_;
+    int func_idx_;
 };
 
 int main()
@@ -95,7 +109,7 @@ int main()
                 // std::cout << uint64_t(mul) << ": ";
                 // auto ops = funcs.get_op();
                 // for (auto j = 0u; j < ops.size(); j++)
-                //{
+                // {
                 //     std::cout << values[j] << " " << ops[j] << " ";
                 // }
                 // std::cout << values.back() << std::endl;
