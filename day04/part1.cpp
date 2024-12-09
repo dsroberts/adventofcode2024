@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <cinttypes>
+#include <cstdint>
 #include <algorithm>
 
 int radial_check(std::vector<std::string> *grid, uint32_t i, uint32_t j)
