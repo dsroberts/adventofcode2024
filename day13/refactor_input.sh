@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
 ### Turn input into x1 x2 y1 y2 tx ty
-lctr=0
 while read button val x y; do
-    lctr=$(( $lctr + 1 ))
     if ! [[ "${button}" ]]; then
         x1=""
         x2=""
@@ -11,7 +9,7 @@ while read button val x y; do
         y2=""
         tx=""
         ty=""
-    
+
     elif [[ "${button}" == 'Prize:' ]]; then
         tx="${val//X=/}"
         tx="${tx//,/}"
@@ -26,7 +24,5 @@ while read button val x y; do
         x2="${x2//,/}"
         y2="${y//Y\+/}"
     fi
-    
 
-
-done < input.txt
+done <input.txt

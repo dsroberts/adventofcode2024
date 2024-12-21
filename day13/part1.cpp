@@ -71,9 +71,9 @@ int main()
 
             for (auto i = 0; i < 2; i++)
             {
-                cost+=(costs[i]*static_cast<int32_t>(std::round(steps[i])));
+                cost += (costs[i] * static_cast<int32_t>(std::round(steps[i])));
             }
-        } 
+        }
     }
     f.close();
     std::cout << cost << std::endl;
