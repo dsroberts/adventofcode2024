@@ -1,4 +1,4 @@
 .vscode
-input.txt
+input*.txt
 demo*.txt
 *.x
