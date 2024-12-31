@@ -18,14 +18,14 @@ bool in_order(std::vector<int> update, int i, std::vector<int> afters)
     return true;
 }
 
-std::vector<int> reorder(std::vector<int> in, std::map<int, std::vector<int>> *afters)
+std::vector<int> reorder(std::vector<int> in, std::map<int, std::vector<int>> &afters)
 {
     std::vector<int> out(in);
     for (auto i = 0; i < in.size(); ++i)
     {
         for (auto j = i + 1; j < in.size(); ++j)
         {
-            if (std::find(afters->at(out[i]).begin(), afters->at(out[i]).end(), in[j]) == afters->at(out[i]).end())
+            if (std::find(afters.at(out[i]).begin(), afters.at(out[i]).end(), in[j]) == afters.at(out[i]).end())
             {
                 // Didn't find it
                 std::swap(out[i], out[j]);
@@ -85,7 +85,7 @@ int main()
         }
         if (!ordered)
         {
-            auto tmp = reorder(update, &afters);
+            auto tmp = reorder(update, afters);
             sum += tmp[(tmp.size() - 1) / 2];
         }
     }

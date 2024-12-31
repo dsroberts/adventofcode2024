@@ -5,16 +5,16 @@
 #include <vector>
 #include <cstdint>
 
-std::pair<std::vector<uint32_t>, std::vector<uint32_t>> consolidate_gaps(std::vector<int> *sparse)
+std::pair<std::vector<uint32_t>, std::vector<uint32_t>> consolidate_gaps(std::vector<int> &sparse)
 {
     std::vector<uint32_t> out_idxs;
     std::vector<uint32_t> out_sizes;
     int space = 0;
-    for (auto i = 0ul; i < sparse->size(); ++i)
+    for (auto i = 0ul; i < sparse.size(); ++i)
     {
         if (space)
         {
-            if (sparse->at(i) != -1)
+            if (sparse[i] != -1)
             {
                 out_sizes.push_back(i - out_idxs.back());
                 space = 1 - space;
@@ -22,7 +22,7 @@ std::pair<std::vector<uint32_t>, std::vector<uint32_t>> consolidate_gaps(std::ve
         }
         else
         {
-            if (sparse->at(i) == -1)
+            if (sparse[i] == -1)
             {
                 out_idxs.push_back(i);
                 space = 1 - space;
@@ -31,7 +31,7 @@ std::pair<std::vector<uint32_t>, std::vector<uint32_t>> consolidate_gaps(std::ve
     }
     if (space)
     {
-        out_sizes.push_back(sparse->size() - out_idxs.back());
+        out_sizes.push_back(sparse.size() - out_idxs.back());
     }
     return std::pair<std::vector<uint32_t>, std::vector<uint32_t>>{out_idxs, out_sizes};
 }
@@ -94,7 +94,7 @@ int main()
                 break;
             }
         }
-        auto o = consolidate_gaps(&sparse_format);
+        auto o = consolidate_gaps(sparse_format);
         gap_lens = o.second;
         gap_idxs = o.first;
     }

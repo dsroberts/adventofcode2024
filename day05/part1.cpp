@@ -59,7 +59,7 @@ int main()
     }
 
     int sum = 0;
-    for (auto update : updates)
+    for (auto &update : updates)
     {
         bool ordered = true;
         for (auto i = 0; i < update.size(); i++)

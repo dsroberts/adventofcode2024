@@ -5,7 +5,7 @@
 #include <cinttypes>
 #include <algorithm>
 
-int radial_check(std::vector<std::string> *grid, uint32_t i, uint32_t j)
+int radial_check(std::vector<std::string> &grid, uint32_t i, uint32_t j)
 {
 
     /*
@@ -23,9 +23,9 @@ int radial_check(std::vector<std::string> *grid, uint32_t i, uint32_t j)
         {
             std::vector<uint32_t> i_coord{i - i_mul, i, i + i_mul};
             std::vector<uint32_t> j_coord{j - j_mul, j, j + j_mul};
-            std::string tmp{grid->at(i_coord[0])[j_coord[0]],
-                            grid->at(i_coord[1])[j_coord[1]],
-                            grid->at(i_coord[2])[j_coord[2]]};
+            std::string tmp{grid.at(i_coord[0])[j_coord[0]],
+                            grid.at(i_coord[1])[j_coord[1]],
+                            grid.at(i_coord[2])[j_coord[2]]};
             count += (tmp == std::string{"MAS"});
         }
     }
@@ -49,7 +49,7 @@ int main()
         {
             if (all[i][j] == 'A')
             {
-                count += radial_check(&all, i, j);
+                count += radial_check(all, i, j);
             }
         }
     }

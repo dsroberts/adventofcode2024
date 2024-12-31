@@ -17,31 +17,31 @@ struct guard_coords
     }
 };
 
-void turn_right(guard_coords *c)
+void turn_right(guard_coords &c)
 {
-    if (c->deltax == 0)
+    if (c.deltax == 0)
     {
-        if (c->deltay == -1)
+        if (c.deltay == -1)
         {
-            c->deltax = 1;
+            c.deltax = 1;
         }
         else
         {
-            c->deltax = -1;
+            c.deltax = -1;
         }
-        c->deltay = 0;
+        c.deltay = 0;
     }
     else
     {
-        if (c->deltax == -1)
+        if (c.deltax == -1)
         {
-            c->deltay = -1;
+            c.deltay = -1;
         }
         else
         {
-            c->deltay = 1;
+            c.deltay = 1;
         }
-        c->deltax = 0;
+        c.deltax = 0;
     }
 }
 
@@ -86,7 +86,7 @@ int main()
         }
         if (all[coords.y + coords.deltay][coords.x + coords.deltax] == '#')
         {
-            turn_right(&coords);
+            turn_right(coords);
         }
     }
     for (auto coord : visited)
@@ -96,7 +96,7 @@ int main()
     std::cout << unique_visited.size() << std::endl;
 
     int loop_counter = 0;
-    for (auto obstruction_pos : unique_visited)
+    for (auto &obstruction_pos : unique_visited)
     {
         auto prev = all[obstruction_pos.second][obstruction_pos.first];
         all[obstruction_pos.second][obstruction_pos.first] = '#';
@@ -112,7 +112,7 @@ int main()
             }
             while (all[coords.y + coords.deltay][coords.x + coords.deltax] == '#')
             {
-                turn_right(&coords);
+                turn_right(coords);
             }
             if (std::find(visited.begin(), visited.end(), coords) != visited.end())
             {

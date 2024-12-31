@@ -77,7 +77,7 @@ int main()
     f.close();
     uint64_t sum = 0;
 
-    for (auto [target, values] : std::views::zip(targets, vals))
+    for (auto &&[target, values] : std::views::zip(targets, vals))
     {
         std::vector<OpChain<uint64_t>> ops;
         for (auto pipe_count = 0ul; pipe_count < values.size(); pipe_count++)
@@ -97,7 +97,7 @@ int main()
                 } while (std::next_permutation(tmp.begin(), tmp.end()));
             }
         }
-        for (auto op : ops)
+        for (auto &op : ops)
         {
             auto mul = std::ranges::fold_left(values.begin() + 1, values.end(), *values.begin(), [&op](uint64_t a, uint64_t b)
                                               { return op(a, b); });

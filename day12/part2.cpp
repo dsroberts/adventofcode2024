@@ -66,12 +66,13 @@ struct grid_bounds
 class Region
 {
 public:
-    grid_bounds *in_grid;
+    grid_bounds &in_grid;
     std::vector<std::pair<Coord, std::array<uint32_t, 4>>> coords;
     const char letter;
     std::uint32_t vertices;
-    Region(char c) : letter(c),
-                     vertices(0ul) {};
+    Region(char c, grid_bounds &in_g) : letter(c),
+                                        vertices(0ul),
+                                        in_grid(in_g) {};
     uint32_t area()
     {
         return static_cast<uint32_t>(coords.size());
@@ -90,26 +91,25 @@ public:
 private:
 };
 
-void region(Coord pt, std::vector<std::string> *all, grid_bounds *in_grid, std::vector<Coord> *found, Region *region_coords)
+void region(Coord pt, std::vector<std::string> &all, grid_bounds &in_grid, std::vector<Coord> &found, Region &region_coords)
 {
-    found->push_back(pt);
-    region_coords->in_grid = in_grid;
-    region_coords->coords.push_back({pt, {0, 0, 0, 0}});
+    found.push_back(pt);
+    region_coords.coords.push_back({pt, {0, 0, 0, 0}});
     std::vector<Coord> neighbours;
     for (auto d : cardinal_dirs)
     {
         neighbours.push_back(pt + d);
     }
-    auto region_idx = region_coords->coords.size() - 1;
+    auto region_idx = region_coords.coords.size() - 1;
     std::array<uint32_t, 4> fences = {0, 0, 0, 0};
 
     for (auto i = 0; i < 4; i++)
     {
-        if (in_grid->operator()(neighbours[i]))
+        if (in_grid(neighbours[i]))
         {
-            if (all->operator[](neighbours[i].y)[neighbours[i].x] == all->operator[](pt.y)[pt.x])
+            if (all[neighbours[i].y][neighbours[i].x] == all[pt.y][pt.x])
             {
-                if (std::find(found->begin(), found->end(), neighbours[i]) == found->end())
+                if (std::find(found.begin(), found.end(), neighbours[i]) == found.end())
                 {
                     region(neighbours[i], all, in_grid, found, region_coords);
                 }
@@ -124,16 +124,16 @@ void region(Coord pt, std::vector<std::string> *all, grid_bounds *in_grid, std::
             fences[i] = 1;
         }
     }
-    region_coords->coords[region_idx].second = fences;
+    region_coords.coords[region_idx].second = fences;
     // Find this squares contribution to the total vertices
     auto nneighbours = 4ul - std::accumulate(fences.begin(), fences.end(), 0ul, std::plus<uint32_t>());
     if (nneighbours == 0)
     {
-        region_coords->vertices += 4;
+        region_coords.vertices += 4;
     }
     else if (nneighbours == 1)
     {
-        region_coords->vertices += 2;
+        region_coords.vertices += 2;
     }
     else if (nneighbours == 2)
     {
@@ -154,15 +154,15 @@ void region(Coord pt, std::vector<std::string> *all, grid_bounds *in_grid, std::
         // Not a straight line
         if (!(nidx[0] == 0 && nidx[1] == 2) && !(nidx[0] == 1 && nidx[1] == 3))
         {
-            region_coords->vertices++;
+            region_coords.vertices++;
             auto diag = pt + cardinal_dirs[(nidx[0] + 2) % 4] + cardinal_dirs[(nidx[1] + 2) % 4];
-            if (!in_grid->operator()(diag))
+            if (!in_grid(diag))
             {
-                region_coords->vertices++;
+                region_coords.vertices++;
             }
-            else if (all->operator[](diag.y)[diag.x] != region_coords->letter)
+            else if (all[diag.y][diag.x] != region_coords.letter)
             {
-                region_coords->vertices++;
+                region_coords.vertices++;
             }
         }
     }
@@ -203,21 +203,21 @@ void region(Coord pt, std::vector<std::string> *all, grid_bounds *in_grid, std::
             diag1 += cardinal_dirs[0] + cardinal_dirs[1];
             diag2 += cardinal_dirs[2] + cardinal_dirs[1];
         }
-        if (!in_grid->operator()(diag1))
+        if (!in_grid(diag1))
         {
-            region_coords->vertices++;
+            region_coords.vertices++;
         }
-        else if (all->operator[](diag1.y)[diag1.x] != region_coords->letter)
+        else if (all[diag1.y][diag1.x] != region_coords.letter)
         {
-            region_coords->vertices++;
+            region_coords.vertices++;
         }
-        if (!in_grid->operator()(diag2))
+        if (!in_grid(diag2))
         {
-            region_coords->vertices++;
+            region_coords.vertices++;
         }
-        else if (all->operator[](diag2.y)[diag2.x] != region_coords->letter)
+        else if (all[diag2.y][diag2.x] != region_coords.letter)
         {
-            region_coords->vertices++;
+            region_coords.vertices++;
         }
     }
     else
@@ -229,13 +229,13 @@ void region(Coord pt, std::vector<std::string> *all, grid_bounds *in_grid, std::
         diags.push_back(pt + cardinal_dirs[3] + cardinal_dirs[0]);
         for (auto d : diags)
         {
-            if (!in_grid->operator()(d))
+            if (!in_grid(d))
             {
-                region_coords->vertices++;
+                region_coords.vertices++;
             }
-            else if (all->operator[](d.y)[d.x] != region_coords->letter)
+            else if (all[d.y][d.x] != region_coords.letter)
             {
-                region_coords->vertices++;
+                region_coords.vertices++;
             }
         }
     }
@@ -266,8 +266,8 @@ int main()
         {
             if (std::find(found1.begin(), found1.end(), Coord{i, j}) == found1.end())
             {
-                regions.emplace_back(all[j][i]);
-                region(Coord{i, j}, &all, &in_grid, &found1, &regions.back());
+                regions.emplace_back(all[j][i], in_grid);
+                region(Coord{i, j}, all, in_grid, found1, regions.back());
             }
         }
     }

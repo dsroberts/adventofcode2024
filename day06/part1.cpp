@@ -13,31 +13,31 @@ struct guard_coords
     }
 };
 
-void turn_right(guard_coords *delta)
+void turn_right(guard_coords &delta)
 {
-    if (delta->x == 0)
+    if (delta.x == 0)
     {
-        if (delta->y == -1)
+        if (delta.y == -1)
         {
-            delta->x = 1;
+            delta.x = 1;
         }
         else
         {
-            delta->x = -1;
+            delta.x = -1;
         }
-        delta->y = 0;
+        delta.y = 0;
     }
     else
     {
-        if (delta->x == -1)
+        if (delta.x == -1)
         {
-            delta->y = -1;
+            delta.y = -1;
         }
         else
         {
-            delta->y = 1;
+            delta.y = 1;
         }
-        delta->x = 0;
+        delta.x = 0;
     }
 }
 
@@ -84,7 +84,7 @@ int main()
         }
         if (all[coords.y + delta.y][coords.x + delta.x] == '#')
         {
-            turn_right(&delta);
+            turn_right(delta);
         }
     }
     std::cout << visited.size() << std::endl;

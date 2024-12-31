@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <algorithm>
 
-int radial_check(std::vector<std::string> *grid, uint32_t i, uint32_t j)
+int radial_check(std::vector<std::string> &grid, uint32_t i, uint32_t j)
 {
 
     /*
@@ -33,16 +33,16 @@ int radial_check(std::vector<std::string> *grid, uint32_t i, uint32_t j)
     {
         for (auto j_mul = -1; j_mul < 2; ++j_mul)
         {
-            if (i + 3 * i_mul < 0 || i + 3 * i_mul >= grid->size() || j + 3 * j_mul < 0 || j + 3 * j_mul >= grid->at(0).length())
+            if (i + 3 * i_mul < 0 || i + 3 * i_mul >= grid.size() || j + 3 * j_mul < 0 || j + 3 * j_mul >= grid.at(0).length())
             {
                 continue;
             }
             std::vector<uint32_t> i_coord{i, i + i_mul, i + 2 * i_mul, i + 3 * i_mul};
             std::vector<uint32_t> j_coord{j, j + j_mul, j + 2 * j_mul, j + 3 * j_mul};
-            std::string tmp{grid->at(i_coord[0])[j_coord[0]],
-                            grid->at(i_coord[1])[j_coord[1]],
-                            grid->at(i_coord[2])[j_coord[2]],
-                            grid->at(i_coord[3])[j_coord[3]]};
+            std::string tmp{grid.at(i_coord[0])[j_coord[0]],
+                            grid.at(i_coord[1])[j_coord[1]],
+                            grid.at(i_coord[2])[j_coord[2]],
+                            grid.at(i_coord[3])[j_coord[3]]};
             count += (tmp == std::string{"XMAS"});
         }
     }
@@ -66,7 +66,7 @@ int main()
         {
             if (all[i][j] == 'X')
             {
-                count += radial_check(&all, i, j);
+                count += radial_check(all, i, j);
             }
         }
     }

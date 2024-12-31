@@ -47,12 +47,12 @@ struct grid_bounds
                                       c.y >= 0; }
 };
 
-Coord contribution(Coord pt, std::vector<std::string> *all, grid_bounds *in_grid, std::vector<Coord> *found)
+Coord contribution(Coord pt, const std::vector<std::string> &all, grid_bounds &in_grid, std::vector<Coord> &found)
 {
     // coord.x = area
     // coord.y = perimeter
     auto out = Coord(1, 0);
-    found->push_back(pt);
+    found.push_back(pt);
 
     std::vector<Coord> neighbours = {pt + Coord(1, 0),
                                      pt + Coord(0, 1),
@@ -61,17 +61,17 @@ Coord contribution(Coord pt, std::vector<std::string> *all, grid_bounds *in_grid
     for (auto neighbour : neighbours)
     {
         {
-            if (!in_grid->operator()(neighbour))
+            if (!in_grid(neighbour))
             {
                 out.y++;
             }
-            else if (all->operator[](neighbour.y)[neighbour.x] != all->operator[](pt.y)[pt.x])
+            else if (all[neighbour.y][neighbour.x] != all[pt.y][pt.x])
             {
                 out.y++;
             }
             else
             {
-                if (std::find(found->begin(), found->end(), neighbour) == found->end())
+                if (std::find(found.begin(), found.end(), neighbour) == found.end())
                 {
                     out += contribution(neighbour, all, in_grid, found);
                 }
@@ -105,7 +105,7 @@ int main()
         {
             if (std::find(found.begin(), found.end(), Coord{i, j}) == found.end())
             {
-                auto tmp = contribution(Coord{i, j}, &all, &in_grid, &found);
+                auto tmp = contribution(Coord{i, j}, all, in_grid, found);
                 price += (tmp.x * tmp.y);
             }
         }

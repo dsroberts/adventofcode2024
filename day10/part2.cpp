@@ -17,41 +17,41 @@ struct grid_bounds
                                            y >= 0; }
 };
 
-void find(std::vector<std::vector<int>> *grid, coord pt, grid_bounds *in_grid, uint32_t *ctr)
+void find(const std::vector<std::vector<int>> &grid, coord pt, grid_bounds &in_grid, uint32_t &ctr)
 {
 
-    auto val = grid->at(pt.second)[pt.first];
+    auto val = grid[pt.second][pt.first];
     if (val == 9)
     {
 
-        (*ctr)++;
+        ctr++;
 
         return;
     }
-    if (in_grid->operator()(pt.second + 1, pt.first))
+    if (in_grid(pt.second + 1, pt.first))
     {
-        if (grid->at(pt.second + 1)[pt.first] == val + 1)
+        if (grid[pt.second + 1][pt.first] == val + 1)
         {
             find(grid, coord{pt.first, pt.second + 1}, in_grid, ctr);
         }
     }
-    if (in_grid->operator()(pt.second - 1, pt.first))
+    if (in_grid(pt.second - 1, pt.first))
     {
-        if (grid->at(pt.second - 1)[pt.first] == val + 1)
+        if (grid[pt.second - 1][pt.first] == val + 1)
         {
             find(grid, coord{pt.first, pt.second - 1}, in_grid, ctr);
         }
     }
-    if (in_grid->operator()(pt.second, pt.first + 1))
+    if (in_grid(pt.second, pt.first + 1))
     {
-        if (grid->at(pt.second)[pt.first + 1] == val + 1)
+        if (grid[pt.second][pt.first + 1] == val + 1)
         {
             find(grid, coord{pt.first + 1, pt.second}, in_grid, ctr);
         }
     }
-    if (in_grid->operator()(pt.second, pt.first - 1))
+    if (in_grid(pt.second, pt.first - 1))
     {
-        if (grid->at(pt.second)[pt.first - 1] == val + 1)
+        if (grid[pt.second][pt.first - 1] == val + 1)
         {
             find(grid, coord{pt.first - 1, pt.second}, in_grid, ctr);
         }
@@ -90,7 +90,7 @@ int main()
     uint32_t ctr = 0;
     for (auto start : trail_starts)
     {
-        find(&all, start, &in_grid, &ctr);
+        find(all, start, in_grid, ctr);
     }
     std::cout << ctr << std::endl;
 }
